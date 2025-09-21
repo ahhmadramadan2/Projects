@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Emoji Reaction Tracker</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f3f4f6;
+    }
+
+    header {
+      background: linear-gradient(90deg, #ff9a9e, #fad0c4);
+      color: white;
+      padding: 30px 0;
+      text-align: center;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px;
+    }
+
+    #reactionBox {
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 600px;
+    }
+
+    .dropdown {
+      margin-bottom: 20px;
+    }
+
+    select {
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    .reaction-panel {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      flex-wrap: wrap;
+      margin-bottom: 30px;
+    }
+
+    .emoji-card {
+      background-color: white;
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      padding: 20px;
+      text-align: center;
+      width: 120px;
+      transition: transform 0.2s;
+      cursor: pointer;
+    }
+
+    .emoji-card:hover {
+      transform: scale(1.05);
+    }
+
+    .emoji {
+      font-size: 48px;
+    }
+
+    .label {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    .controls {
+      display: flex;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    #colorBtn {
+      background-color: #ffe082;
+    }
+
+    #resetBtn {
+      background-color: #ff8a80;
+      color: white;
+    }
+
+    .reaction-summary {
+      margin-top: 30px;
+      font-size: 20px;
+      font-weight: bold;
+      color: #2e7d32;
+    }
+  </style>
+</head>
+<body>
+
+  <header>🎉 React to This Post!</header>
+
+  <div class="container">
+    <div id="reactionBox">
+      
+      <div class="dropdown">
+        <label for="moodSelect">Choose Mood Category: </label>
+        <select id="moodSelect">
+          <option value="funny">Funny</option>
+          <option value="angry">Angry</option>
+          <option value="love">Love</option>
+        </select>
+      </div>
+
+      <div class="reaction-panel" id="reactionPanel"></div>
+
+      <div class="controls">
+        <button id="colorBtn">Change Mood Color</button>
+        <button id="resetBtn">Reset</button>
+      </div>
+
+      <div class="reaction-summary" id="reactionMessage">
+        Total reactions: 0
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let totalReactions = 0;
+    const reactionBox = document.getElementById("reactionBox");
+    const reactionPanel = document.getElementById("reactionPanel");
+    const reactionMessage = document.getElementById("reactionMessage");
+    const moodSelect = document.getElementById("moodSelect");
+    const colorBtn = document.getElementById("colorBtn");
+    const resetBtn = document.getElementById("resetBtn");
+
+    const moodData = {
+      funny: [
+        { emoji: "😂", label: "LOL" },
+        { emoji: "🤣", label: "ROFL" },
+        { emoji: "😹", label: "Cat Laugh" }
+      ],
+      angry: [
+        { emoji: "😡", label: "Angry" },
+        { emoji: "🤬", label: "Furious" },
+        { emoji: "😠", label: "Mad" }
+      ],
+      love: [
+        { emoji: "😍", label: "In Love" },
+        { emoji: "😘", label: "Kiss" },
+        { emoji: "❤️", label: "Heart" }
+      ]
+    };
+
+    const emojiMessages = {
+      "😂": "LOL!",
+      "🤣": "That's hilarious!",
+      "😹": "Even cats laugh!",
+      "😡": "You're angry!",
+      "🤬": "Super mad!",
+      "😠": "Grrr!",
+      "😍": "You love this!",
+      "😘": "Sweet kiss!",
+      "❤️": "Lots of love!"
+    };
+
+    function renderEmojis(mood) {
+      reactionPanel.innerHTML = "";
+      moodData[mood].forEach(item => {
+        const card = document.createElement("div");
+        card.className = "emoji-card";
+        card.dataset.emoji = item.emoji;
+
+        card.innerHTML = `
+          <div class="emoji">${item.emoji}</div>
+          <div class="label">${item.label}</div>
+        `;
+
+        card.onclick = () => {
+          totalReactions++;
+          reactionMessage.textContent = `Total reactions: ${totalReactions} — ${emojiMessages[item.emoji] || ""}`;
+          if (totalReactions === 5) {
+            alert("Wow! You really like reacting!");
+          }
+        };
+
+        reactionPanel.appendChild(card);
+      });
+    }
+
+    moodSelect.onchange = () => {
+      const selectedMood = moodSelect.value;
+      renderEmojis(selectedMood);
+    };
+
+    colorBtn.onclick = () => {
+      const colors = ["#e3f2fd", "#fff3e0", "#fce4ec", "#f1f8e9"];
+      const randomColor = colors[Math.floor(Math.random() * colors.length)];
+      reactionBox.style.backgroundColor = randomColor;
+    };
+
+    resetBtn.onclick = () => {
+      totalReactions = 0;
+      reactionMessage.textContent = "Total reactions: 0";
+      reactionBox.style.backgroundColor = "#ffffff";
+      moodSelect.value = "funny";
+      renderEmojis("funny");
+    };
+
+    // Initial load
+    renderEmojis("funny");
+  </script>
+
+</body>
+</html>
